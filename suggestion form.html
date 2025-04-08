@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Energy Saving Suggestions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: #016426;
+            color: #D3D3D3;
+        }
+        .floating-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 24px;
+        }
+        .floating-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);    
+        }
+        .btn-animate {
+            transition: transform 0.2s;
+        }
+        .btn-animate:hover {
+            transform: scale(1.05);
+        }
+        .nav-link {
+            transition: color 0.2s;
+            padding: 0.5rem 1rem;
+        }
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .nav-link.active {
+            border-bottom: 2px solid white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <nav class="bg-green-700 p-4 rounded-lg floating-card mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold mb-4 md:mb-0">Energy Suggestions</h1>
+            <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="nav-link text-white"><i class="fas fa-home mr-2"></i>Home</a></li>
+                    <li><a href="/predict" class="nav-link text-white"><i class="fas fa-chart-line mr-2"></i>Predict</a></li>
+                    <li><a href="/visualize" class="nav-link text-white"><i class="fas fa-chart-bar mr-2"></i>Visualize</a></li>
+                    <li><a href="/suggestions" class="nav-link text-white active"><i class="fas fa-lightbulb mr-2"></i>Suggestions</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main" class="container mx-auto max-w-3xl">
+        <div class="bg-green-700 p-6 rounded-lg floating-card">
+            <h2 class="text-2xl font-bold mb-4 text-center">Get Energy Saving Suggestions</h2>
+            <form method="POST" action="/suggestions" class="space-y-6">
+                <div class="space-y-4">
+                    <div>
+                        <label for="building_id" class="block text-lg mb-2">Building ID</label>
+                        <select name="building_id" id="building_id" required 
+                                class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-white focus:ring-2 focus:ring-white">
+                            <option value="1">Building A</option>
+                            <option value="2">Building B</option>
+                            <option value="3">Building C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-6">
+                    <button type="submit" class="bg-white text-green-700 px-8 py-3 rounded-lg btn-animate font-bold">
+                        <i class="fas fa-lightbulb mr-2"></i>Get Suggestions
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
