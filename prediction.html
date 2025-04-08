@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: #016426;
+            color: #D3D3D3;
+        }
+        .floating-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 24px;
+        }
+        .floating-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);    
+        }
+        .btn-animate {
+            transition: transform 0.2s;
+        }
+        .btn-animate:hover {
+            transform: scale(1.05);
+        }
+        .nav-link {
+            transition: color 0.2s;
+            padding: 0.5rem 1rem;
+        }
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .nav-link.active {
+            border-bottom: 2px solid white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <nav class="bg-green-700 p-4 rounded-lg floating-card mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold mb-4 md:mb-0">Energy Predictor</h1>
+            <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="nav-link text-white"><i class="fas fa-home mr-2"></i>Home</a></li>
+                    <li><a href="/predict" class="nav-link text-white active"><i class="fas fa-chart-line mr-2"></i>Predict</a></li>
+                    <li><a href="/visualize" class="nav-link text-white"><i class="fas fa-chart-bar mr-2"></i>Visualize</a></li>
+                    <li><a href="/suggestions" class="nav-link text-white"><i class="fas fa-lightbulb mr-2"></i>Suggestions</a></li>
+                </ul>
+                <a href="/" class="bg-white text-green-700 px-4 py-2 rounded-lg btn-animate">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main" class="container mx-auto max-w-5xl">
+        <div class="bg-green-700 p-6 rounded-lg floating-card">
+            <h1 class="text-2xl font-bold mb-2 text-center">Prediction Results</h1>
+            <p class="text-gray-300 mb-6 text-center">Energy consumption prediction for Building {{ building_id }}</p>
+
+            <div class="bg-gray-700 p-6 rounded-lg mb-6 floating-card">
+                <h2 class="text-xl font-bold mb-4 text-center">Predicted Energy Consumption</h2>
+                <div class="text-center">
+                    <span class="text-5xl font-bold text-white">{{ prediction }}</span>
+                    <span class="text-2xl text-gray-300 ml-2">kWh</span>
+                    <p class="text-gray-400 mt-2">Predicted daily energy consumption</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
