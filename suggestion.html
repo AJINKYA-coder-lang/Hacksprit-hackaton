@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy-Saving Suggestions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: #016426;
+            color: #D3D3D3;
+        }
+        .floating-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 24px;
+        }
+        .floating-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);    
+        }
+        .suggestion {
+            border-left: 4px solid #28a745;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        .high-priority {
+            border-left-color: #dc3545;
+        }
+        .medium-priority {
+            border-left-color: #ffc107;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <nav class="bg-green-700 p-4 rounded-lg floating-card mb-6">
+        <div class="flex justify-between items-center">
+            <a class="text-2xl font-bold" href="/">Energy Predictor</a>
+            <div>
+                <ul class="flex space-x-6">
+                    <li><a class="text-white hover:text-gray-200" href="/">Home</a></li>
+                    <li><a class="text-white hover:text-gray-200" href="/predict">Predict</a></li>
+                    <li><a class="text-white hover:text-gray-200" href="/visualize">Visualize</a></li>
+                    <li><a class="text-white font-bold border-b-2 border-white" href="/suggestions">Suggestions</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main" class="container mx-auto max-w-3xl">
+        <div class="bg-green-700 p-6 rounded-lg floating-card">
+            <h1 class="text-2xl font-bold mb-2 text-center">Energy-Saving Suggestions for Building {{ building_id }}</h1>
+            <p class="text-gray-300 mb-6 text-center">Here are the suggestions to minimize energy consumption:</p>
+
+            <div class="bg-gray-700 p-6 rounded-lg">
+                {% for suggestion in suggestions %}
+                    <div class="suggestion {% if suggestion['Priority'] == 'High' %}high-priority{% elif suggestion['Priority'] == 'Medium' %}medium-priority{% endif %} bg-gray-800 p-4 rounded-lg mb-4">
+                        <h5 class="text-xl font-bold">{{ suggestion['Suggestion'] }}</h5>
+                        <p class="text-gray-300"><strong>Potential Savings:</strong> {{ suggestion['Potential_Savings_kWh'] }} kWh</p>
+                        <p class="text-gray-300"><strong>Priority:</strong> {{ suggestion['Priority'] }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>
