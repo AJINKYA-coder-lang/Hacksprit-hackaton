@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Consumption Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: #016426;
+            color: #D3D3D3;
+        }
+        .floating-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 24px;
+        }
+        .floating-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);    
+        }
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <nav class="bg-green-700 p-4 rounded-lg floating-card mb-6">
+        <div class="flex justify-between items-center">
+            <a class="text-2xl font-bold" href="/">Energy Predictor</a>
+            <div>
+                <ul class="flex space-x-6">
+                    <li><a class="text-white hover:text-gray-200" href="/">Home</a></li>
+                    <li><a class="text-white hover:text-gray-200" href="/predict">Predict</a></li>
+                    <li><a class="text-white font-bold border-b-2 border-white" href="/visualize">Visualize</a></li>
+                    <li><a class="text-white hover:text-gray-200" href="/suggestions">Suggestions</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main" class="container mx-auto max-w-6xl">
+        <div class="bg-green-700 p-6 rounded-lg floating-card">
+            <h1 class="text-2xl font-bold mb-6 text-center">Energy Consumption Visualization</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="chart-container">
+                    <h2 class="text-xl font-bold mb-4">Energy Consumption by Building</h2>
+                    <img src="{{ url_for('static', filename='energy_consumption.png') }}" alt="Energy Consumption Graph" class="chart-img">
+                </div>
+
+                <div class="chart-container">
+                    <h2 class="text-xl font-bold mb-4">Temperature vs. Energy Consumption</h2>
+                    <img src="{{ url_for('static', filename='temp_vs_energy.png') }}" alt="Temperature vs Energy Graph" class="chart-img">
+                </div>
+
+                <div class="chart-container">
+                    <h2 class="text-xl font-bold mb-4">Weekday vs. Weekend Comparison</h2>
+                    <img src="{{ url_for('static', filename='weekday_weekend.png') }}" alt="Weekday vs Weekend Graph" class="chart-img">
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
