@@ -17,9 +17,7 @@ def predict_page():
 
 @app.route('/predict_form')
 def predict_form():
-    # Placeholder for the actual prediction form if it's a separate file
-    # Based on file list, "predict form" might be a file but let's check its content
-    return render_template('prediction.html', building_id=1, prediction=250.5)
+    return render_template('predict_form.html')
 
 @app.route('/visualize')
 def visualize():
@@ -35,7 +33,7 @@ def suggestions():
             {'Suggestion': 'Improve insulation', 'Potential_Savings_kWh': 30, 'Priority': 'Low'}
         ]
         return render_template('suggestion.html', building_id=building_id, suggestions=dummy_suggestions)
-    return render_template('suggestion form.html')
+    return render_template('suggestion_form.html')
 
 @app.route('/add_components')
 def add_components():
