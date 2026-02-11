@@ -5,6 +5,7 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet" />
   <style>
@@ -121,32 +122,26 @@
         <div class="bg-green-700 w-full md:w-20 flex md:flex-col items-center py-4 space-y-4 floating-card sidebar">
           <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
                          shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
-            onclick="window.location.href='/'" title="Home">
+            onclick="window.location.href='/'" title="Dashboard Home">
             <i class="fas fa-home text-gray-700"></i>
           </button>
 
           <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
                          shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
-            onclick="window.location.href='/predict'" title="Energy Insights">
+            onclick="window.location.href='/predict'" title="Energy Predictions">
+            <i class="fas fa-magic text-gray-700"></i>
+          </button>
+
+          <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
+                         shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
+            onclick="window.location.href='/visualize'" title="Data Analytics">
+            <i class="fas fa-chart-bar text-gray-700"></i>
+          </button>
+
+          <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
+                         shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
+            onclick="window.location.href='/suggestions'" title="AI Suggestions">
             <i class="fas fa-lightbulb text-gray-700"></i>
-          </button>
-
-          <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
-                         shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
-            onclick="window.location.href='/visualize'" title="Leaderboard">
-            <i class="fas fa-trophy text-gray-700"></i>
-          </button>
-
-          <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
-                         shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
-            onclick="window.location.href='/suggestions'" title="Energy Control">
-            <i class="fas fa-sliders-h text-gray-700"></i>
-          </button>
-
-          <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 
-                         shadow-lg transform transition-all hover:scale-110 active:scale-95 hover:shadow-2xl"
-            onclick="window.location.href='/add_components'" title="View Predictions">
-            <i class="fas fa-chart-line text-gray-700"></i>
           </button>
         </div>
 
@@ -168,7 +163,12 @@
                   class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 hidden transform transition-all duration-100 ease-in-out z-[100]">
                   <p class="px-4 py-2 text-gray-700 truncate">{{ user.email }}</p>
                   <div class="border-t border-gray-200"></div>
-                  <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+                  <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-id-badge mr-2"></i> Profile
+                  </a>
+                  <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                  </a>
                 </div>
               </div>
             </div>
@@ -178,21 +178,22 @@
             <!-- Sectorwise Consumption -->
             <div class="bg-green-700 p-4 rounded-lg floating-card">
               <h2 class="text-xl font-bold mb-4 text-center">Sectorwise Consumption</h2>
-              <input class="w-full p-2 mb-4 rounded-lg text-black " placeholder="search" type="text" />
-              <div class="space-y-2">
-                <button class="w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
+              <input id="sectorSearchInput" onkeyup="filterSectors()" class="w-full p-2 mb-4 rounded-lg text-black "
+                placeholder="search" type="text" />
+              <div id="sectorList" class="space-y-2">
+                <button class="sector-item w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
                   onclick="navigateTo('adminPage')">
                   Admin
                 </button>
-                <button class="w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
+                <button class="sector-item w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
                   onclick="navigateTo('csePage')">
                   CSE Department
                 </button>
-                <button class="w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
+                <button class="sector-item w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
                   onclick="navigateTo('productionPage')">
                   Production Department
                 </button>
-                <button class="w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
+                <button class="sector-item w-full bg-gray-700 text-gray-300 p-2 rounded-lg btn-animate"
                   onclick="navigateTo('mechanicalPage')">
                   Mechanical Department
                 </button>
@@ -228,31 +229,30 @@
             <!-- Power Saved -->
             <div class="bg-green-700 p-4 rounded-lg floating-card">
               <h2 class="text-xl font-bold mb-4 text-center">Power Saved</h2>
-              <div class="flex justify-center">
-                <img alt="Power saved chart" class="rounded-lg img-hover" height="150"
-                  src="https://storage.googleapis.com/a1aa/image/URGdlP7uP-1lhITHHtFKicNImLw7p_krvRHwsU8wsp4.jpg"
-                  width="200"
-                  onclick="showGraphModal('Power Saved Analysis', 'https://storage.googleapis.com/a1aa/image/URGdlP7uP-1lhITHHtFKicNImLw7p_krvRHwsU8wsp4.jpg', 'Power savings analysis shows impressive results from our efficiency initiatives:<br><br>- Total power saved this year: 42,500 kWh<br>- Equivalent to $5,100 in cost reduction<br>- Carbon footprint reduction: 30 metric tons<br>- Automated lighting controls contributed to 35% of total savings<br>- HVAC optimization responsible for 45% of savings<br>- Equipment upgrades account for 20% of savings')" />
+              <div class="flex flex-col items-center">
+                <p class="text-4xl font-bold text-white mb-2">{{ saved }} kWh</p>
+                <div class="w-full h-32">
+                  <canvas id="powerSavedChart"></canvas>
+                </div>
               </div>
             </div>
             <!-- Total Consumption -->
             <div class="bg-green-700 p-4 rounded-lg floating-card">
               <h2 class="text-xl font-bold mb-4 text-center">Total Consumption</h2>
-              <div class="flex justify-center">
-                <img alt="Total consumption chart" class="rounded-lg img-hover" height="150"
-                  src="https://storage.googleapis.com/a1aa/image/DVEX-My6UzCxFXYfW6bE4YQwOT0GxELlw9suXlbp2yo.jpg"
-                  width="200"
-                  onclick="showGraphModal('Total Consumption Overview', 'https://storage.googleapis.com/a1aa/image/DVEX-My6UzCxFXYfW6bE4YQwOT0GxELlw9suXlbp2yo.jpg', 'Total consumption overview provides insights into energy usage patterns:<br><br>- Year-to-date consumption: 145,750 kWh<br>- Average monthly consumption: 12,145 kWh<br>- Projected annual consumption: 174,900 kWh<br>- 8.5% reduction compared to previous year<br>- Peak consumption period: Mid-July through August<br>- Lowest consumption period: December through February')" />
+              <div class="flex flex-col items-center">
+                <p class="text-4xl font-bold text-white mb-2">{{ total }} kWh</p>
+                <div class="w-full h-32">
+                  <canvas id="totalConsumptionChart"></canvas>
+                </div>
               </div>
             </div>
             <!-- Event Consumption -->
             <div class="bg-green-700 p-4 rounded-lg floating-card">
               <h2 class="text-xl font-bold mb-4 text-center">Event Consumption</h2>
-              <div class="flex justify-center">
-                <img alt="Event consumption chart" class="rounded-lg img-hover" height="150"
-                  src="https://storage.googleapis.com/a1aa/image/cM7O8-bmbtgIhhv-oy0XYvLC-AF72DQ1tXP6zxoLUmY.jpg"
-                  width="200"
-                  onclick="showGraphModal('Event Energy Consumption', 'https://storage.googleapis.com/a1aa/image/cM7O8-bmbtgIhhv-oy0XYvLC-AF72DQ1tXP6zxoLUmY.jpg', 'Event energy consumption tracks usage during special campus events:<br><br>- Average event consumption: 320 kWh per event<br>- Highest consumption event: Annual Tech Fair (780 kWh)<br>- Lowest consumption event: Environmental Summit (210 kWh)<br>- Implementation of energy-efficient event guidelines resulted in 22% reduction compared to previous year<br>- Evening events consume 35% more energy than daytime events')" />
+              <div class="flex flex-col items-center">
+                <div class="w-full h-40">
+                  <canvas id="eventConsumptionChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -265,18 +265,100 @@
         dropdown.classList.toggle('hidden');
       }
 
-      // Close the dropdown if the user clicks outside of it
-      window.onclick = function (event) {
-        if (!event.target.matches('.fa-user')) {
-          const dropdowns = document.getElementsByClassName('dropdown-content');
-          for (let i = 0; i < dropdowns.length; i++) {
-            const openDropdown = dropdowns[i];
-            if (!openDropdown.classList.contains('hidden')) {
-              openDropdown.classList.add('hidden');
-            }
+      function filterSectors() {
+        const input = document.getElementById('sectorSearchInput');
+        const filter = input.value.toLowerCase();
+        const sectorList = document.getElementById('sectorList');
+        const buttons = sectorList.getElementsByClassName('sector-item');
+
+        for (let i = 0; i < buttons.length; i++) {
+          const txtValue = buttons[i].textContent || buttons[i].innerText;
+          if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            buttons[i].style.display = "";
+          } else {
+            buttons[i].style.display = "none";
           }
         }
       }
+
+      function showGraphModal(title, imgSrc, info) {
+        document.getElementById('graphTitle').innerText = title;
+        document.getElementById('expandedGraph').src = imgSrc;
+        document.getElementById('graphInfo').innerHTML = info;
+        document.getElementById('graphModal').style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById('graphModal').style.display = "none";
+      }
+
+      function navigateTo(pageId) {
+        window.location.href = '/department/' + pageId;
+      }
+
+      // Main Dashboard Charts
+      const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { display: false },
+          y: { display: false }
+        }
+      };
+
+      // Power Saved Chart
+      new Chart(document.getElementById('powerSavedChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: '#4ade80'
+          }]
+        },
+        options: commonOptions
+      });
+
+      // Total Consumption Trend
+      new Chart(document.getElementById('totalConsumptionChart'), {
+        type: 'line',
+        data: {
+          labels: {{ trend_labels | tojson }},
+        datasets: [{
+          data: {{ trend_values | tojson }},
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: false
+          }]
+        },
+        options: commonOptions
+      });
+
+      // Event Consumption Pie
+      new Chart(document.getElementById('eventConsumptionChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Regular', 'Events'],
+          datasets: [{
+            data: [70, 30],
+            backgroundColor: ['#15803d', '#facc15'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { color: '#ffffff', boxWidth: 10 }
+            }
+          }
+        }
+      });
     </script>
 </body>
 

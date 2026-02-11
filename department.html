@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{{ dept.title }} - Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #016426;
+            font-family: 'Roboto', sans-serif;
+            color: #D3D3D3;
+        }
+
+        .floating-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 2rem;
+        }
+
+        .btn-animate {
+            transition: transform 0.2s;
+        }
+
+        .btn-animate:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="p-4">
+    <div class="max-w-6xl mx-auto mt-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center bg-green-700 p-6 rounded-3xl floating-card mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white uppercase">{{ dept.title }}</h1>
+                <p class="text-green-200">Sectoral Consumption Analysis</p>
+            </div>
+            <button onclick="window.location.href='/'"
+                class="bg-white text-green-700 px-6 py-2 rounded-xl font-bold btn-animate shadow-md">
+                Back to Dashboard
+            </button>
+        </div>
+
+        <!-- Alert for logging -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="bg-white/20 backdrop-blur-md text-white p-4 rounded-2xl mb-8 border border-white/20 text-center">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-green-700 p-6 rounded-3xl floating-card text-center">
+                <i class="fas fa-bolt text-yellow-400 text-3xl mb-3"></i>
+                <h3 class="text-green-200 text-sm uppercase">Current Usage</h3>
+                <p class="text-3xl font-bold text-white">{{ dept.usage }}</p>
+            </div>
+            <div class="bg-green-700 p-6 rounded-3xl floating-card text-center">
+                <i class="fas fa-leaf text-green-400 text-3xl mb-3"></i>
+                <h3 class="text-green-200 text-sm uppercase">Efficiency</h3>
+                <p class="text-3xl font-bold text-white">{{ dept.efficiency }}</p>
+            </div>
+            <div class="bg-green-700 p-6 rounded-3xl floating-card text-center">
+                <i class="fas fa-clock text-blue-300 text-3xl mb-3"></i>
+                <h3 class="text-green-200 text-sm uppercase">Last Record</h3>
+                <p class="text-3xl font-bold text-white text-xl">{{ dept.last_update }}</p>
+            </div>
+        </div>
+
+        <!-- Graph and Form Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Historical Graph -->
+            <div class="lg:col-span-2 bg-green-700 p-8 rounded-3xl floating-card">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                    <i class="fas fa-chart-area mr-3 text-green-300"></i> Energy Consumption Trend
+                </h3>
+                <div class="h-64">
+                    <canvas id="energyTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <div class="bg-green-700 p-8 rounded-3xl floating-card">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                    <i class="fas fa-pen-nib mr-3 text-green-300"></i> Log New Data
+                </h3>
+                <form action="/log_consumption" method="POST" class="space-y-4">
+                    <input type="hidden" name="building_id" value="{{ dept.id }}">
+
+                    <div>
+                        <label class="text-xs text-green-200 uppercase mb-1 block">Energy (kWh)</label>
+                        <input type="number" step="0.01" name="energy_value" required
+                            class="w-full bg-green-800 text-white p-3 rounded-xl border border-green-600 focus:outline-none focus:border-white transition-all">
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-green-200 uppercase mb-1 block">Date</label>
+                        <input type="date" name="date" required
+                            class="w-full bg-green-800 text-white p-3 rounded-xl border border-green-600 focus:outline-none focus:border-white transition-all">
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-green-200 uppercase mb-1 block">Temp (°C)</label>
+                        <input type="number" name="temp" value="25"
+                            class="w-full bg-green-800 text-white p-3 rounded-xl border border-green-600 focus:outline-none focus:border-white transition-all">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-white text-green-700 font-bold py-3 rounded-xl btn-animate shadow-lg hover:shadow-2xl">
+                        SUBMIT LOG
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('energyTrendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ dept.graph_labels | tojson }},
+            datasets: [{
+                label: 'Energy Consumption (kWh)',
+                data: {{ dept.graph_values | tojson }},
+            borderColor: '#4ade80',
+            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#ffffff'
+        }]
+      },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#D3D3D3' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#D3D3D3' }
+                }
+            }
+        }
+    });
+
+        function navigateTo(pageId) {
+            window.location.href = '/department/' + pageId;
+        }
+    </script>
+</body>
+
+</html>

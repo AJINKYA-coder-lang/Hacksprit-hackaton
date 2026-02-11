@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Profile - EcoTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #016426;
+            font-family: 'Roboto', sans-serif;
+            color: #D3D3D3;
+        }
+
+        .floating-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 2rem;
+        }
+
+        .btn-animate {
+            transition: transform 0.2s;
+        }
+
+        .btn-animate:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar {
+            height: 48vh;
+            border-radius: 64px;
+        }
+    </style>
+</head>
+
+<body class="p-4">
+    <div class="flex flex-col md:flex-row max-w-7xl mx-auto mt-4">
+        <!-- Sidebar -->
+        <div
+            class="bg-green-700 w-full md:w-20 flex md:flex-col items-center py-4 space-y-4 floating-card sidebar mb-4 md:mb-0">
+            <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 shadow-lg"
+                onclick="window.location.href='/'" title="Home">
+                <i class="fas fa-home text-gray-700"></i>
+            </button>
+            <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 shadow-lg"
+                onclick="window.location.href='/predict'" title="Energy Insights">
+                <i class="fas fa-lightbulb text-gray-700"></i>
+            </button>
+            <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 shadow-lg"
+                onclick="window.location.href='/visualize'" title="Leaderboard">
+                <i class="fas fa-trophy text-gray-700"></i>
+            </button>
+            <button class="bg-white rounded-full p-3 btn-animate flex items-center justify-center w-12 h-12 shadow-lg"
+                onclick="window.location.href='/suggestions'" title="Energy Control">
+                <i class="fas fa-sliders-h text-gray-700"></i>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 md:ml-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center bg-green-700 p-6 rounded-2xl floating-card mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-wider text-white">Admin Profile</h1>
+                <button onclick="window.location.href='/'"
+                    class="bg-white text-green-700 px-6 py-2 rounded-xl font-bold btn-animate shadow-md">
+                    Back to Dashboard
+                </button>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- User Info -->
+                <div class="lg:col-span-1 bg-green-700 p-8 rounded-3xl floating-card text-center">
+                    <div
+                        class="w-32 h-32 bg-white rounded-full mx-auto mb-6 flex items-center justify-center border-4 border-green-500 shadow-xl">
+                        <i class="fas fa-user-shield text-green-700 text-5xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">{{ user.name }}</h2>
+                    <p class="text-green-200 mb-6">System Administrator</p>
+                    <div class="border-t border-green-600 pt-6">
+                        <button
+                            class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl mb-3 transition-colors">
+                            Edit Profile
+                        </button>
+                        <a href="/logout"
+                            class="block w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl transition-colors">
+                            Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-green-700 p-8 rounded-3xl floating-card">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                            <i class="fas fa-info-circle mr-3"></i> Account Information
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-green-800/50 p-4 rounded-2xl border border-green-600">
+                                <p class="text-green-300 text-sm uppercase mb-1">Full Name</p>
+                                <p class="text-white font-bold">{{ user.name }}</p>
+                            </div>
+                            <div class="bg-green-800/50 p-4 rounded-2xl border border-green-600">
+                                <p class="text-green-300 text-sm uppercase mb-1">Email Address</p>
+                                <p class="text-white font-bold">{{ user.email }}</p>
+                            </div>
+                            <div class="bg-green-800/50 p-4 rounded-2xl border border-green-600">
+                                <p class="text-green-300 text-sm uppercase mb-1">User ID</p>
+                                <p class="text-white font-bold">#{{ user.id }}</p>
+                            </div>
+                            <div class="bg-green-800/50 p-4 rounded-2xl border border-green-600">
+                                <p class="text-green-300 text-sm uppercase mb-1">Account Status</p>
+                                <p class="text-green-400 font-bold flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span> Active
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-700 p-8 rounded-3xl floating-card">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                            <i class="fas fa-shield-alt mr-3"></i> Security
+                        </h3>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center justify-between p-4 bg-green-800/50 rounded-2xl border border-green-600">
+                                <div>
+                                    <p class="text-white font-bold">Two-Factor Authentication</p>
+                                    <p class="text-green-400 text-xs">Recommended for extra security</p>
+                                </div>
+                                <button
+                                    class="bg-white text-green-700 px-4 py-1 rounded-lg text-sm font-bold">Enable</button>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-4 bg-green-800/50 rounded-2xl border border-green-600">
+                                <div>
+                                    <p class="text-white font-bold">Password Last Changed</p>
+                                    <p class="text-green-400 text-xs">Today</p>
+                                </div>
+                                <button
+                                    class="bg-white text-green-700 px-4 py-1 rounded-lg text-sm font-bold">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

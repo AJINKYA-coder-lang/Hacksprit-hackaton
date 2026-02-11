@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy Consumption Visualization</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <style>
-        body { 
+        body {
             font-family: 'Roboto', sans-serif;
             background-color: #016426;
             color: #D3D3D3;
         }
+
         .floating-card {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: transform 0.3s ease-in-out;
             border-radius: 24px;
         }
+
         .floating-card:hover {
             transform: translateY(-7px);
-            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);    
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
+
         .chart-container {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 1.5rem;
         }
+
         .chart-img {
             max-width: 100%;
             height: auto;
@@ -35,6 +40,7 @@
         }
     </style>
 </head>
+
 <body class="p-4">
     <nav class="bg-green-700 p-4 rounded-lg floating-card mb-6">
         <div class="flex justify-between items-center">
@@ -49,28 +55,132 @@
             </div>
         </div>
     </nav>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <main role="main" class="container mx-auto max-w-6xl">
-        <div class="bg-green-700 p-6 rounded-lg floating-card">
-            <h1 class="text-2xl font-bold mb-6 text-center">Energy Consumption Visualization</h1>
+        <div class="bg-green-700 p-6 rounded-lg floating-card mt-8">
+            <h1 class="text-3xl font-bold mb-8 text-center text-white border-b border-green-600 pb-4">Energy Insights
+            </h1>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="chart-container">
-                    <h2 class="text-xl font-bold mb-4">Energy Consumption by Building</h2>
-                    <img src="{{ url_for('static', filename='energy_consumption.png') }}" alt="Energy Consumption Graph" class="chart-img">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Building Comparison -->
+                <div class="chart-container bg-green-800/50 p-6">
+                    <h2 class="text-xl font-bold mb-4 text-green-200">Building Comparison (Total kWh)</h2>
+                    <canvas id="buildingBarChart" class="max-h-80"></canvas>
                 </div>
 
-                <div class="chart-container">
-                    <h2 class="text-xl font-bold mb-4">Temperature vs. Energy Consumption</h2>
-                    <img src="{{ url_for('static', filename='temp_vs_energy.png') }}" alt="Temperature vs Energy Graph" class="chart-img">
+                <!-- Temperature Impact -->
+                <div class="chart-container bg-green-800/50 p-6">
+                    <h2 class="text-xl font-bold mb-4 text-green-200">Temperature vs. Energy Consumption</h2>
+                    <canvas id="tempScatterChart" class="max-h-80"></canvas>
                 </div>
 
-                <div class="chart-container">
-                    <h2 class="text-xl font-bold mb-4">Weekday vs. Weekend Comparison</h2>
-                    <img src="{{ url_for('static', filename='weekday_weekend.png') }}" alt="Weekday vs Weekend Graph" class="chart-img">
+                <!-- Weekend vs Weekday -->
+                <div class="chart-container bg-green-800/50 p-6 lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-4 text-green-200 text-center">Weekday vs. Weekend Average Usage</h2>
+                    <div class="h-64">
+                        <canvas id="weekendComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Summary -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-green-800/80 p-6 rounded-2xl text-center border border-green-600">
+                    <p class="text-green-300 text-sm uppercase">Total Analyzed Records</p>
+                    <p class="text-3xl font-bold text-white mt-2">90+</p>
+                </div>
+                <div class="bg-green-800/80 p-6 rounded-2xl text-center border border-green-600">
+                    <p class="text-green-300 text-sm uppercase">Peak Building</p>
+                    <p class="text-3xl font-bold text-white mt-2">Production</p>
+                </div>
+                <div class="bg-green-800/80 p-6 rounded-2xl text-center border border-green-600">
+                    <p class="text-green-300 text-sm uppercase">Temp Correlation</p>
+                    <p class="text-3xl font-bold text-white mt-2">Strong Positive</p>
                 </div>
             </div>
         </div>
     </main>
+
+    <script>
+        // Data from Flask
+        const labels = {{ building_labels | tojson }};
+        const values = {{ building_values | tojson }};
+        const scatterData = {{ temp_scatter | tojson }};
+        const compLabels = {{ comparison_labels | tojson }};
+        const compValues = {{ comparison_values | tojson }};
+
+        // 1. Bar Chart: Building Comparison
+        new Chart(document.getElementById('buildingBarChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Energy (kWh)',
+                    data: values,
+                    backgroundColor: ['#4ade80', '#fbbf24', '#60a5fa'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: '#14532d' }, ticks: { color: '#D3D3D3' } },
+                    x: { grid: { display: false }, ticks: { color: '#D3D3D3' } }
+                }
+            }
+        });
+
+        // 2. Scatter Chart: Temp vs Energy
+        new Chart(document.getElementById('tempScatterChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Temp vs Energy',
+                    data: scatterData,
+                    backgroundColor: '#f87171',
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Energy (kWh)', color: '#D3D3D3' },
+                        grid: { color: '#14532d' },
+                        ticks: { color: '#D3D3D3' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Temp (°C)', color: '#D3D3D3' },
+                        grid: { color: '#14532d' },
+                        ticks: { color: '#D3D3D3' }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 3. Weekend vs Weekday Comparison
+        new Chart(document.getElementById('weekendComparisonChart'), {
+            type: 'bar',
+            data: {
+                labels: compLabels,
+                datasets: [{
+                    label: 'Avg Energy (kWh)',
+                    data: compValues,
+                    backgroundColor: ['#34d399', '#f87171'],
+                    borderRadius: 12
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#14532d' }, ticks: { color: '#D3D3D3' } },
+                    y: { grid: { display: false }, ticks: { color: '#D3D3D3' } }
+                }
+            }
+        });
+    </script>
 </body>
+
 </html>
