@@ -1,12 +1,19 @@
 import os
+import csv
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='.')
-app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a random secret key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SECRET_KEY'] = 'your-secret-key-here' 
+
+# Use /tmp for SQLite on Vercel because the root is read-only
+if os.environ.get('VERCEL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/users.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -268,7 +275,7 @@ def add_components():
 def profile():
     return render_template('profile.html', user=current_user)
 
-import csv
+
 
 @app.route('/department/<name>')
 @login_required
